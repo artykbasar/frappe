@@ -43,7 +43,9 @@ def search_link(
 		ignore_user_permissions=ignore_user_permissions,
 	)
 
+	doctype_is_tree = frappe.db.get_value("DocType", doctype, "is_tree")
 	frappe.response["results"] = build_for_autosuggest(frappe.response["values"], doctype=doctype)
+	frappe.response["is_tree"] = doctype_is_tree
 	del frappe.response["values"]
 
 

@@ -147,6 +147,17 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 		});
 		return false;
 	}
+	open_tree_veiw() {
+		var doctype = this.get_options();
+		if (!doctype) return;
+		new frappe.ui.form.LinkTreeView({
+			doctype: doctype,
+			target: this,
+			txt: this.get_input_value(),
+		});
+		return false;
+
+	}
 	new_doc() {
 		var doctype = this.get_options();
 		var me = this;
@@ -273,7 +284,7 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 								r.results.push({
 									html: `<span class="text-muted" style="line-height: 1.5">${filter_string}</span>`,
 									value: "",
-									action: () => {},
+									action: () => { },
 								});
 							}
 						}
@@ -316,12 +327,26 @@ frappe.ui.form.ControlLink = class ControlLink extends frappe.ui.form.ControlDat
 									action: me.open_advanced_search,
 								});
 							}
-						}
-						me.$input.cache[doctype][term] = r.results;
-						me.awesomplete.list = me.$input.cache[doctype][term];
-						me.toggle_href(doctype);
-					},
-				});
+							// Tree View
+							if (locals && locals["DocType"]) {
+								if (r.is_tree == 1) {
+									r.results.push({
+										html:
+											"<span class='text-primary link-option'>" +
+											"<i class='fa fa-list' style='margin-right: 5px;'></i> " +
+											__("Tree View") +
+											"</span>",
+										label: __("Tree View"),
+										value: "tree_view__link_option",
+										action: me.open_tree_veiw,
+									});
+								}
+							}
+							me.$input.cache[doctype][term] = r.results;
+							me.awesomplete.list = me.$input.cache[doctype][term];
+							me.toggle_href(doctype);
+						},
+					});
 			}, 500)
 		);
 
